@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybersecurity Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            background: #f8f9fa;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            color: #495057;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+        
+        .tab:hover {
+            background: #e9ecef;
+            color: #2c3e50;
+        }
+        
+        .tab.active {
+            background: #3498db;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .excel-table th {
+            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .excel-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+            transition: background 0.3s ease;
+        }
+        
+        .excel-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .excel-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .excel-table tr:nth-child(even):hover {
+            background: #e9ecef;
+        }
+        
+        .category-header {
+            background: #3498db;
+            color: white;
+            padding: 20px;
+            margin: 20px 0 10px 0;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .category-header button {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+        
+        .category-header button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+        
+        .download-section {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            border-top: 2px solid #e9ecef;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .description {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .tool-detail {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        
+        .tool-name {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CYBERSECURITY DASHBOARD</h1>
+            <p>Comprehensive Security Topics, Tools & Activities Overview</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="networking-count">12</div>
+                <div class="stat-label">Networking Topics</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="attacks-count">15</div>
+                <div class="stat-label">Attack Types</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="cryptography-count">5</div>
+                <div class="stat-label">Cryptography Concepts</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="tools-count">6</div>
+                <div class="stat-label">Security Tools</div>
+            </div>
+        </div>
+        
+        <div class="tabs" id="tabBar">
+            <button class="tab active" onclick="showTab('networking', event)">Networking</button>
+            <button class="tab" onclick="showTab('attacks', event)">Attacks</button>
+            <button class="tab" onclick="showTab('cryptography', event)">Cryptography</button>
+            <button class="tab" onclick="showTab('web-security', event)">Web Security</button>
+            <button class="tab" onclick="showTab('tools', event)">Tools</button>
+            <button class="tab" onclick="showTab('knowledge', event)">Knowledge Base</button>
+            <button class="tab" onclick="addNewSection()">➕</button>
+        </div>
+        
+        <div id="networking" class="tab-content active">
+            <div class="category-header">
+                🌐 NETWORKING FUNDAMENTALS
+                <button onclick="addRowToTable('networking')">+</button>
+            </div>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Topic</th>
+                        <th>Category</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>IP</td><td>Addressing</td><td>High</td><td>✅ Covered</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>2</td><td>Ports</td><td>Communication</td><td>High</td><td>✅ Covered</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>3</td><td>Router</td><td>Hardware</td><td>Medium</td><td>✅ Covered</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>4</td><td>Subnet mask</td><td>Addressing</td><td>High</td><td>✅ Covered</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>5</td><td>Switch</td><td>Hardware</td><td>Medium</td><td>✅ Covered</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>6</td><td>Hub</td><td>Hardware</td><td>Low</td><td>✅ Covered</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>7</td><td>Firewall</td><td>Security</td><td>High</td><td>✅ Covered</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>8</td><td>Protocols</td><td>Communication</td><td>High</td><td>✅ Covered</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>9</td><td>Localhost</td><td>Addressing</td><td>Medium</td><td>✅ Covered</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>10</td><td>Default gateway</td><td>Routing</td><td>Medium</td><td>✅ Covered</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>11</td><td>Network Topologies</td><td>Architecture</td><td>Medium</td><td>✅ Covered</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>12</td><td>OSI Model</td><td>Framework</td><td>High</td><td>✅ Covered</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div id="attacks" class="tab-content">
+            <div class="category-header">
+                🎯 ATTACK VECTORS & METHODS
+                <button onclick="addRowToTable('attacks')">+</button>
+            </div>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Attack Type</th>
+                        <th>Category</th>
+                        <th>Risk Level</th>
+                        <th>Target</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>Phishing</td><td>Social Engineering</td><td>High</td><td>Users</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>2</td><td>Vishing</td><td>Social Engineering</td><td>High</td><td>Users</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>3</td><td>Social Engineering</td><td>Human Factor</td><td>High</td><td>Users</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>4</td><td>DoS and DDoS</td><td>Availability</td><td>High</td><td>Systems</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>5</td><td>Man-in-the-Middle</td><td>Interception</td><td>High</td><td>Communications</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>6</td><td>CSRF</td><td>Web Application</td><td>Medium</td><td>Web Apps</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>7</td><td>SSRF</td><td>Web Application</td><td>Medium</td><td>Web Apps</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>8</td><td>SQL Injection</td><td>Database</td><td>High</td><td>Databases</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>9</td><td>Email spoofing</td><td>Communication</td><td>Medium</td><td>Email Systems</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>10</td><td>XSS</td><td>Web Application</td><td>Medium</td><td>Web Apps</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>11</td><td>IDOR</td><td>Access Control</td><td>Medium</td><td>Applications</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>12</td><td>Broken Access Control</td><td>Authorization</td><td>High</td><td>Applications</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>13</td><td>Response Tampering</td><td>Data Integrity</td><td>Medium</td><td>Applications</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>14</td><td>Price Manipulation</td><td>Business Logic</td><td>Medium</td><td>E-commerce</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>15</td><td>RAT</td><td>Malware</td><td>High</td><td>Devices</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div id="cryptography" class="tab-content">
+            <div class="category-header">
+                🔐 CRYPTOGRAPHY CONCEPTS
+                <button onclick="addRowToTable('cryptography')">+</button>
+            </div>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Concept</th>
+                        <th>Type</th>
+                        <th>Use Case</th>
+                        <th>Complexity</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>Hashing</td><td>Data Integrity</td><td>Password Storage</td><td>Medium</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>2</td><td>Salting</td><td>Security Enhancement</td><td>Password Protection</td><td>Medium</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>3</td><td>Key Exchange</td><td>Communication Security</td><td>Secure Communication</td><td>High</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>4</td><td>Public and Private Key</td><td>Asymmetric Encryption</td><td>Digital Signatures</td><td>High</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>5</td><td>Algorithms</td><td>Implementation</td><td>Encryption Methods</td><td>High</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div id="web-security" class="tab-content">
+            <div class="category-header">
+                🌐 WEB SECURITY THREATS
+                <button onclick="addRowToTable('web-security')">+</button>
+            </div>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Threat</th>
+                        <th>Type</th>
+                        <th>Impact</th>
+                        <th>Prevention</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>API</td><td>Interface Security</td><td>High</td><td>Authentication</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>2</td><td>Virus</td><td>Malicious Software</td><td>High</td><td>Antivirus</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>3</td><td>Malware</td><td>Malicious Software</td><td>High</td><td>Security Tools</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>4</td><td>Trojans</td><td>Deceptive Software</td><td>High</td><td>Behavioral Analysis</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>5</td><td>Payload Attached by Files</td><td>File-based Attack</td><td>High</td><td>File Scanning</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>6</td><td>Keyloggers</td><td>Information Theft</td><td>High</td><td>Endpoint Protection</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                    <tr><td>7</td><td>APK</td><td>Mobile Security</td><td>Medium</td><td>App Store Verification</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div id="tools" class="tab-content">
+            <div class="category-header">
+                🛠️ SECURITY TOOLS & UTILITIES
+                <button onclick="addToolDetail()">+</button>
+            </div>
+            <div class="tool-detail">
+                <div class="tool-name">1. Burp Suite <button class="delete-btn" onclick="deleteToolDetail(this)">Delete</button></div>
+                <div class="description">Monitoring tool such as Proxy. It placed in between the web browser and server. It help to test the web application request and response functions. And we can use it to modify the request and response.</div>
+            </div>
+            <div class="tool-detail">
+                <div class="tool-name">2. Ettercap <button class="delete-btn" onclick="deleteToolDetail(this)">Delete</button></div>
+                <div class="description">It is used to Test and Perform the Man-in-the-Middle attack. It can able to capture the user enter password, usernames like keyloggers. For do this we need target ip and the target must be in the same network.</div>
+            </div>
+            <div class="tool-detail">
+                <div class="tool-name">3. SQLmap <button class="delete-btn" onclick="deleteToolDetail(this)">Delete</button></div>
+                <div class="description">Sqlmap is most powerful tool for view the database. It is a command line interface tool, so we need to know basic commands must.</div>
+            </div>
+            <div class="tool-detail">
+                <div class="tool-name">4. Nmap <button class="delete-btn" onclick="deleteToolDetail(this)">Delete</button></div>
+                <div class="description">Nmap is used to scan the target's open ports.</div>
+            </div>
+            <div class="tool-detail">
+                <div class="tool-name">5. Ngrok <button class="delete-btn" onclick="deleteToolDetail(this)">Delete</button></div>
+                <div class="description">Ngrok is used to tunneling the TCP and HTTP ports. It used for many purpose, but I used for make a RAT payload binding.</div>
+            </div>
+            <div class="tool-detail">
+                <div class="tool-name">6. Ahmyth <button class="delete-btn" onclick="deleteToolDetail(this)">Delete</button></div>
+                <div class="description">Ahmyth is RAT payload Creating tool. It an most popular tool when the android 5 released period. It help to create a payload. It is a GUI tool.</div>
+            </div>
+        </div>
+        
+        <div id="knowledge" class="tab-content">
+            <div class="category-header">
+                📚 KNOWLEDGE SHARING & PRACTICAL INSIGHTS
+                <button onclick="addKnowledgeItem()">+</button>
+            </div>
+            <div class="tool-detail">
+                <div class="tool-name">1. Ahmyth RAT <button class="delete-btn" onclick="deleteToolDetail(this)">Delete</button></div>
+                <div class="description">Performing RAT attack in Android Mobiles by using Ahmyth tool. It is compatiable for only android 5 and lollipop Operating Systems (OS) only. For Upgrade version OS we use Andro rat and similar rat tools.</div>
+            </div>
+            <div class="tool-detail">
+                <div class="tool-name">2. OTP bypass in MFA <button class="delete-btn" onclick="deleteToolDetail(this)">Delete</button></div>
+                <div class="description">MFA is an addition security system, it has some vulnerable such we can able to Bypass the MFA such as OTP, Capcha, Puzzle solving etc… For this attack I used burpsuite for modify the Request and Response.</div>
+            </div>
+            <div class="tool-detail">
+                <div class="tool-name">3. Response tampering attack <button class="delete-btn" onclick="deleteToolDetail(this)">Delete</button></div>
+                <div class="description">Response tampering attack is possible vulnerable when the web application are not encrypted the data while transmitting user to server or server to user. By using this attack we can able to gain the unauthorized entering, gain unauthorized resources etc…</div>
+            </div>
+            <div class="tool-detail">
+                <div class="tool-name">4. Prompt injection attack in chatbots <button class="delete-btn" onclick="deleteToolDetail(this)">Delete</button></div>
+                <div class="description">Prompt injection attack is done in the AI chatbots, if the AI chatbot is vulnerable to prompt injection then we can able to get the more confidential info, sensitive info, explore the resource of the chatbot etc…</div>
+            </div>
+        </div>
+        
+        <div class="download-section">
+            <h3>Export Options</h3>
+            <p>Download your cybersecurity dashboard in various formats</p>
+            <button class="download-btn" onclick="exportToCSV()">📊 Export to CSV</button>
+            <button class="download-btn" onclick="exportToJSON()">📄 Export to JSON</button>
+            <button class="download-btn" onclick="printDashboard()">🖨️ Print Dashboard</button>
+            <button class="download-btn" onclick="clearAllData()" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">🗑️ Clear All Data</button>
+        </div>
+    </div>
+    
+    <script>
+        // Storage functions
+function saveData() {
+    const data = {
+        tables: {},
+        tools: [],
+        knowledge: [],
+        customSections: []
+    };
+    
+    // Save table data
+    const tables = document.querySelectorAll('.excel-table');
+    tables.forEach(table => {
+        const section = table.closest('.tab-content').id;
+        data.tables[section] = [];
+        
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length > 0) {
+                const rowData = [];
+                for (let i = 1; i < cells.length - 1; i++) { // Skip S.No and Actions columns
+                    rowData.push(cells[i].textContent.trim());
+                }
+                data.tables[section].push(rowData);
+            }
+        });
+    });
+    
+    // Save tools data
+    const toolsSection = document.getElementById('tools');
+    const toolDetails = toolsSection.querySelectorAll('.tool-detail');
+    toolDetails.forEach(detail => {
+        const name = detail.querySelector('.tool-name').textContent.replace('Delete', '').trim();
+        const description = detail.querySelector('.description').textContent.trim();
+        data.tools.push({ name, description });
+    });
+    
+    // Save knowledge data
+    const knowledgeSection = document.getElementById('knowledge');
+    const knowledgeDetails = knowledgeSection.querySelectorAll('.tool-detail');
+    knowledgeDetails.forEach(detail => {
+        const name = detail.querySelector('.tool-name').textContent.replace('Delete', '').trim();
+        const description = detail.querySelector('.description').textContent.trim();
+        data.knowledge.push({ name, description });
+    });
+    
+    // Save custom sections
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+        const tabText = tab.textContent.trim();
+        if (!['Networking', 'Attacks', 'Cryptography', 'Web Security', 'Tools', 'Knowledge Base', '➕'].includes(tabText)) {
+            data.customSections.push(tabText);
+        }
+    });
+    
+    // Note: In production, you would use localStorage here
+    // localStorage.setItem('cybersecurity_dashboard', JSON.stringify(data));
+}
+
+function loadData() {
+    // Note: In production, you would use localStorage here
+    // const savedData = localStorage.getItem('cybersecurity_dashboard');
+    // For now, we'll just update stats
+    updateStats();
+}
+
+function isOriginalTool(name) {
+    const originalTools = ['1. Burp Suite', '2. Ettercap', '3. SQLmap', '4. Nmap', '5. Ngrok', '6. Ahmyth'];
+    return originalTools.some(tool => name.includes(tool));
+}
+
+function isOriginalKnowledge(name) {
+    const originalKnowledge = ['1. Ahmyth RAT', '2. OTP bypass in MFA', '3. Response tampering attack', '4. Prompt injection attack in chatbots'];
+    return originalKnowledge.some(item => name.includes(item));
+}
+
+// Tab functionality
+function showTab(tabName, event) {
+    // Remove active class from all tabs and content
+    const tabs = document.querySelectorAll('.tab');
+    const contents = document.querySelectorAll('.tab-content');
+    
+    tabs.forEach(tab => tab.classList.remove('active'));
+    contents.forEach(content => content.classList.remove('active'));
+    
+    // Add active class to clicked tab and corresponding content
+    if (event && event.target) {
+        event.target.classList.add('active');
+    }
+    
+    const targetContent = document.getElementById(tabName);
+    if (targetContent) {
+        targetContent.classList.add('active');
+    }
+}
+
+// Table management functions
+function addRowToTable(section) {
+    const table = document.querySelector(`#${section} table tbody`);
+    if (!table) return;
+    
+    const rowCount = table.querySelectorAll('tr').length + 1;
+    const newRow = document.createElement('tr');
+    
+    // Different column structures for different sections
+    if (section === 'networking') {
+        newRow.innerHTML = `
+            <td>${rowCount}</td>
+            <td contenteditable="true">New Topic</td>
+            <td contenteditable="true">Category</td>
+            <td contenteditable="true">Medium</td>
+            <td contenteditable="true">📝 New</td>
+            <td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>
+        `;
+    } else if (section === 'attacks') {
+        newRow.innerHTML = `
+            <td>${rowCount}</td>
+            <td contenteditable="true">New Attack</td>
+            <td contenteditable="true">Category</td>
+            <td contenteditable="true">Medium</td>
+            <td contenteditable="true">System</td>
+            <td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>
+        `;
+    } else if (section === 'cryptography') {
+        newRow.innerHTML = `
+            <td>${rowCount}</td>
+            <td contenteditable="true">New Concept</td>
+            <td contenteditable="true">Type</td>
+            <td contenteditable="true">Use Case</td>
+            <td contenteditable="true">Medium</td>
+            <td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>
+        `;
+    } else if (section === 'web-security') {
+        newRow.innerHTML = `
+            <td>${rowCount}</td>
+            <td contenteditable="true">New Threat</td>
+            <td contenteditable="true">Type</td>
+            <td contenteditable="true">Medium</td>
+            <td contenteditable="true">Prevention</td>
+            <td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>
+        `;
+    }
+    
+    table.appendChild(newRow);
+    updateStats();
+    saveData();
+}
+
+function addRowToTableWithData(section, rowData) {
+    const table = document.querySelector(`#${section} table tbody`);
+    if (!table) return;
+    
+    const rowCount = table.querySelectorAll('tr').length + 1;
+    const newRow = document.createElement('tr');
+    
+    let innerHTML = `<td>${rowCount}</td>`;
+    rowData.forEach(cellData => {
+        innerHTML += `<td contenteditable="true">${cellData}</td>`;
+    });
+    innerHTML += `<td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>`;
+    
+    newRow.innerHTML = innerHTML;
+    table.appendChild(newRow);
+}
+
+function deleteRow(button) {
+    const row = button.closest('tr');
+    if (row) {
+        row.remove();
+        updateStats();
+        saveData();
+    }
+}
+
+// Tool management functions
+function addToolDetail() {
+    const toolsSection = document.getElementById('tools');
+    const toolCount = toolsSection.querySelectorAll('.tool-detail').length + 1;
+    
+    const newTool = document.createElement('div');
+    newTool.className = 'tool-detail';
+    newTool.innerHTML = `
+        <div class="tool-name">${toolCount}. <span contenteditable="true">New Tool</span> <button class="delete-btn" onclick="deleteToolDetail(this)">Delete</button></div>
+        <div class="description" contenteditable="true">Description of the new tool...</div>
+    `;
+    
+    toolsSection.insertBefore(newTool, toolsSection.querySelector('.download-section') || toolsSection.lastElementChild);
+    updateStats();
+    saveData();
+}
+
+function addToolDetailWithData(name, description) {
+    const toolsSection = document.getElementById('tools');
+    const toolCount = toolsSection.querySelectorAll('.tool-detail').length + 1;
+    
+    const newTool = document.createElement('div');
+    newTool.className = 'tool-detail';
+    newTool.innerHTML = `
+        <div class="tool-name">${toolCount}. ${name} <button class="delete-btn" onclick="deleteToolDetail(this)">Delete</button></div>
+        <div class="description" contenteditable="true">${description}</div>
+    `;
+    
+    toolsSection.insertBefore(newTool, toolsSection.querySelector('.download-section') || toolsSection.lastElementChild);
+}
+
+function deleteToolDetail(button) {
+    const toolDetail = button.closest('.tool-detail');
+    if (toolDetail) {
+        toolDetail.remove();
+        updateStats();
+        saveData();
+    }
+}
+
+// Knowledge management functions
+function addKnowledgeItem() {
+    const knowledgeSection = document.getElementById('knowledge');
+    const knowledgeCount = knowledgeSection.querySelectorAll('.tool-detail').length + 1;
+    
+    const newItem = document.createElement('div');
+    newItem.className = 'tool-detail';
+    newItem.innerHTML = `
+        <div class="tool-name">${knowledgeCount}. <span contenteditable="true">New Knowledge Item</span> <button class="delete-btn" onclick="deleteToolDetail(this)">Delete</button></div>
+        <div class="description" contenteditable="true">Description of the new knowledge item...</div>
+    `;
+    
+    knowledgeSection.insertBefore(newItem, knowledgeSection.querySelector('.download-section') || knowledgeSection.lastElementChild);
+    updateStats();
+    saveData();
+}
+
+function addKnowledgeItemWithData(name, description) {
+    const knowledgeSection = document.getElementById('knowledge');
+    const knowledgeCount = knowledgeSection.querySelectorAll('.tool-detail').length + 1;
+    
+    const newItem = document.createElement('div');
+    newItem.className = 'tool-detail';
+    newItem.innerHTML = `
+        <div class="tool-name">${knowledgeCount}. ${name} <button class="delete-btn" onclick="deleteToolDetail(this)">Delete</button></div>
+        <div class="description" contenteditable="true">${description}</div>
+    `;
+    
+    knowledgeSection.insertBefore(newItem, knowledgeSection.querySelector('.download-section') || knowledgeSection.lastElementChild);
+}
+
+// Statistics update function
+function updateStats() {
+    const networkingCount = document.querySelectorAll('#networking tbody tr').length;
+    const attacksCount = document.querySelectorAll('#attacks tbody tr').length;
+    const cryptographyCount = document.querySelectorAll('#cryptography tbody tr').length;
+    const toolsCount = document.querySelectorAll('#tools .tool-detail').length;
+    
+    document.getElementById('networking-count').textContent = networkingCount;
+    document.getElementById('attacks-count').textContent = attacksCount;
+    document.getElementById('cryptography-count').textContent = cryptographyCount;
+    document.getElementById('tools-count').textContent = toolsCount;
+}
+
+// Section management functions
+function addNewSection() {
+    const sectionName = prompt('Enter the name for the new section:');
+    if (!sectionName) return;
+    
+    const sectionId = sectionName.toLowerCase().replace(/\s+/g, '-');
+    
+    // Check if section already exists
+    if (document.getElementById(sectionId)) {
+        alert('Section already exists!');
+        return;
+    }
+    
+    createCustomSection(sectionId, sectionName);
+    updateStats();
+    saveData();
+}
+
+function createCustomSection(sectionId, sectionName) {
+    // Create new tab
+    const tabBar = document.getElementById('tabBar');
+    const newTab = document.createElement('button');
+    newTab.className = 'tab';
+    newTab.textContent = sectionName;
+    newTab.onclick = (event) => showTab(sectionId, event);
+    
+    // Insert before the + button
+    const addButton = tabBar.querySelector('.tab:last-child');
+    tabBar.insertBefore(newTab, addButton);
+    
+    // Create new content section
+    const container = document.querySelector('.container');
+    const newContent = document.createElement('div');
+    newContent.id = sectionId;
+    newContent.className = 'tab-content';
+    
+    newContent.innerHTML = `
+        <div class="category-header">
+            📋 ${sectionName.toUpperCase()}
+            <button onclick="addRowToTable('${sectionId}')">+</button>
+        </div>
+        <table class="excel-table">
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    `;
+    
+    // Insert before download section
+    const downloadSection = document.querySelector('.download-section');
+    container.insertBefore(newContent, downloadSection);
+}
+
+// Export functions
+function exportToCSV() {
+    let csvContent = '';
+    
+    // Export all tables
+    const tables = document.querySelectorAll('.excel-table');
+    tables.forEach(table => {
+        const section = table.closest('.tab-content').id;
+        csvContent += `\n${section.toUpperCase()}\n`;
+        
+        // Headers
+        const headers = Array.from(table.querySelectorAll('th')).map(th => th.textContent.trim());
+        csvContent += headers.join(',') + '\n';
+        
+        // Data rows
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            const cells = Array.from(row.querySelectorAll('td')).slice(0, -1); // Exclude actions column
+            const rowData = cells.map(cell => `"${cell.textContent.trim()}"`);
+            csvContent += rowData.join(',') + '\n';
+        });
+    });
+    
+    // Download CSV
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'cybersecurity_dashboard.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function exportToJSON() {
+    const data = {
+        timestamp: new Date().toISOString(),
+        sections: {}
+    };
+    
+    // Export all sections
+    const sections = document.querySelectorAll('.tab-content');
+    sections.forEach(section => {
+        const sectionId = section.id;
+        if (!sectionId) return;
+        
+        data.sections[sectionId] = {
+            type: 'table',
+            data: []
+        };
+        
+        const table = section.querySelector('.excel-table');
+        if (table) {
+            const rows = table.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const cells = Array.from(row.querySelectorAll('td')).slice(0, -1);
+                const rowData = cells.map(cell => cell.textContent.trim());
+                data.sections[sectionId].data.push(rowData);
+            });
+        }
+        
+        // Handle tools and knowledge sections
+        const toolDetails = section.querySelectorAll('.tool-detail');
+        if (toolDetails.length > 0) {
+            data.sections[sectionId].type = 'details';
+            data.sections[sectionId].data = [];
+            toolDetails.forEach(detail => {
+                const name = detail.querySelector('.tool-name').textContent.replace('Delete', '').trim();
+                const description = detail.querySelector('.description').textContent.trim();
+                data.sections[sectionId].data.push({ name, description });
+            });
+        }
+    });
+    
+    // Download JSON
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'cybersecurity_dashboard.json';
+    a.click();
+    URL.revokeURL(url);
+}
+
+function printDashboard() {
+    window.print();
+}
+
+function clearAllData() {
+    if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+        // Clear all table data (but keep original rows)
+        const tables = document.querySelectorAll('.excel-table tbody');
+        tables.forEach(tbody => {
+            const rows = tbody.querySelectorAll('tr');
+            rows.forEach((row, index) => {
+                // Keep original rows, remove only added ones
+                if (index >= getOriginalRowCount(tbody)) {
+                    row.remove();
+                }
+            });
+        });
+        
+        // Clear tools (keep original tools)
+        const toolsSection = document.getElementById('tools');
+        const toolDetails = toolsSection.querySelectorAll('.tool-detail');
+        toolDetails.forEach(detail => {
+            const name = detail.querySelector('.tool-name').textContent;
+            if (!isOriginalTool(name)) {
+                detail.remove();
+            }
+        });
+        
+        // Clear knowledge (keep original knowledge)
+        const knowledgeSection = document.getElementById('knowledge');
+        const knowledgeDetails = knowledgeSection.querySelectorAll('.tool-detail');
+        knowledgeDetails.forEach(detail => {
+            const name = detail.querySelector('.tool-name').textContent;
+            if (!isOriginalKnowledge(name)) {
+                detail.remove();
+            }
+        });
+        
+        // Remove custom sections
+        const customSections = document.querySelectorAll('.tab-content');
+        customSections.forEach(section => {
+            if (!['networking', 'attacks', 'cryptography', 'web-security', 'tools', 'knowledge'].includes(section.id)) {
+                section.remove();
+            }
+        });
+        
+        // Remove custom tabs
+        const customTabs = document.querySelectorAll('.tab');
+        customTabs.forEach(tab => {
+            const tabText = tab.textContent.trim();
+            if (!['Networking', 'Attacks', 'Cryptography', 'Web Security', 'Tools', 'Knowledge Base', '➕'].includes(tabText)) {
+                tab.remove();
+            }
+        });
+        
+        updateStats();
+        // Clear storage
+        // localStorage.removeItem('cybersecurity_dashboard');
+    }
+}
+
+function getOriginalRowCount(tbody) {
+    // Return the number of original rows for each section
+    const section = tbody.closest('.tab-content').id;
+    const originalCounts = {
+        'networking': 12,
+        'attacks': 15,
+        'cryptography': 5,
+        'web-security': 7
+    };
+    return originalCounts[section] || 0;
+}
+
+// Initialize dashboard
+document.addEventListener('DOMContentLoaded', function() {
+    loadData();
+    updateStats();
+    
+    // Set up auto-save on content changes
+    document.addEventListener('input', function(e) {
+        if (e.target.contenteditable === 'true') {
+            saveData();
+        }
+    });
+});
+
+// Add event listeners for inline editing
+document.addEventListener('DOMContentLoaded', function() {
+    // Add event listeners for editable fields
+    const editableElements = document.querySelectorAll('[contenteditable="true"]');
+    editableElements.forEach(element => {
+        element.addEventListener('blur', function() {
+            saveData();
+        });
+        
+        element.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.blur();
+            }
+        });
+    });
+});
+    </script>
